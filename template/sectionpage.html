@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block head %}
+    {% include 'include/header.html' %}
+{% endblock %}
+{% block content %}
+<div class="uk-card uk-card-default uk-card-body">
+    <div class="markdown-body">
+        {{ page.content|safe }}
+    </div>
+</div>
+{% endblock %}
+{% block sidecard %}
+    {% include 'include/showmecard.html' %}
+{% endblock %}

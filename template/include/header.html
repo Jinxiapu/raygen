@@ -1,0 +1,22 @@
+<nav class="uk-navbar" uk-navbar>
+    <div class="uk-navbar-left uk-text-uppercase">
+        <a class="uk-navbar-item uk-logo" href="{{ site.url }}">
+            {% include './inlinepic/logo.svg' %}
+        </a>
+        <ul class="uk-navbar-nav uk-visible@m uk-card-body uk-text-uppercase">
+            {% include 'include/headerli.html' %}
+        </ul>
+    </div>
+    <div class="uk-navbar-right">
+        <a uk-navbar-toggle-icon href="#mobile-nav" class="uk-navbar-toggle uk-hidden@m uk-navbar-toggle-icon uk-icon" uk-toggle></a>
+    </div>
+    <div class="uk-offcanvas-content">
+        <div id="mobile-nav" uk-offcanvas="" class="uk-offcanvas">
+            <div class="uk-offcanvas-bar">
+                <ul class="uk-nav uk-nav-primary uk-text-uppercase uk-nav-center uk-margin-auto-vertical uk-text-center">
+                    {% include 'include/headerli.html' %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

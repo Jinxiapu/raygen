@@ -1,0 +1,7 @@
+{% for li in site.section %}
+    {% if li== "home" %}
+    <li {% if li== page.section %}class="uk-active"{% endif %}><a href="{{ site.url }}">{{ li }}</a></li>
+    {% else %}
+    <li {% if li== page.section %}class="uk-active"{% endif %}><a href="{{ site.url }}{{ li }}/">{{ li }}</a></li>
+    {% endif %}
+{% endfor %}
