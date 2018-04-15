@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-utils
+raygen.utils
 ----------------
 Helper functions
 """
@@ -11,6 +11,10 @@ import errno
 import os
 import sys
 import re
+from datetime import datetime
+
+def get_content_lastmod_time(path):
+    return datetime.fromtimestamp(os.stat(path).st_mtime)
 
 def urlify(s):
     return re.sub(r"\s+", "-", s)
