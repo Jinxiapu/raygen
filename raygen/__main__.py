@@ -11,14 +11,10 @@ import argparse
 import logging
 
 
-from .generate import raygen
-from .server import serve_static_site
-from .config import OUTPUT_DIR
-
 logging.basicConfig(level=logging.DEBUG)
 
 
-def get_raygen_args():
+def get_raygen_argparser():
     """
     Get the command line input/output arguments passed in to `raygen`.
     """
@@ -28,26 +24,35 @@ def get_raygen_args():
     )
     parser.add_argument(
         '--server',
-        help='run the server.'
+        help='run the server.',
+        action="store_true"
     )
     parser.add_argument(
-        '--port',
+        '-p', '--port',
         type=int,
         default=8080,
         help='Port number to serve files on.'
     )
-
-    args = parser.parse_args()
-    return args
+    return parser
 
 
 def main():
     """ Entry point for the package, as defined in `setup.py`. """
 
-    args = get_raygen_args()
+    parser = get_raygen_argparser()
+    try:
+        from .raygen import raygen
+        from .server import serve_static_site
+        args = parser.parse_args()
+        if args.server:
+            raygen("http://127.0.0.1:{}/".format(args.port))
+            serve_static_site(port=args.port)
+        else:
+            raygen()
+    except FileExistsError as e:
+        logging.critical(e)
+        print("Please make sure `site.json` exists in current path\n")
+        parser.print_help()
 
-    if args.server:
-        raygen(True)
-        serve_static_site(OUTPUT_DIR, port=args.port)
-    else:
-        raygen()
+if __name__ == '__main__':
+    main()

@@ -11,6 +11,7 @@ Functions for convert markdown file.
 import subprocess
 from os import path
 import yaml
+import lxml.html as lh
 
 def md2html(md_file_path, pipefunc=None, markdown_type="markdown"):
     """
@@ -28,7 +29,7 @@ def md2html(md_file_path, pipefunc=None, markdown_type="markdown"):
         return pipefunc(result)
 
 
-def md2toc(md_file_path, depth=2, pipefunc=None, markdown_type="markdown"):
+def md2toc(md_file_path, depth=3, pipefunc=None, markdown_type="markdown"):
     """
     generate markdown file's TOC(table of content). depth for depth of TOC.
     :param pipefunc: function who modify output.

@@ -14,9 +14,13 @@ import logging
 
 from jinja2 import Environment, FileSystemLoader
 
-from .util import make_sure_path_exists
-from .config import site, OUTPUT_DIR, TEMPLATE_DIR
-from .construct import construct_site
+from .util import make_sure_path_exists, whether_config_file_exist
+
+if whether_config_file_exist():
+    from .config import site, OUTPUT_DIR, TEMPLATE_DIR
+    from .construct import construct_site
+else:
+    raise FileExistsError("site.json do not exist")
 
 
 def copy_assets(assets_dir, output_dir):
@@ -40,7 +44,7 @@ def copy_assets(assets_dir, output_dir):
             try:
                 shutil.copytree(item_path, new_dir)
             except FileExistsError:
-                logging.warn("assets has existed.")
+                logging.warning("assets has existed.")
 
         # Copy over files in the root of assets_dir
         if os.path.isfile(item_path):
@@ -66,19 +70,20 @@ def format_datetime(value, format='date'):
 
 def write_output(rendered_html, output_filename):
     make_sure_path_exists(os.path.dirname(output_filename))
-    with open(output_filename, "w") as fh:
+    with open(output_filename, "w", encoding="utf-8") as fh:
         fh.write(rendered_html)
         logging.debug("wirte content to {}".format(output_filename))
 
 
 def gen_rendered_html(page, env):
-    return env.get_template("{}.html".format(page["type"])).render(page=page, site=site)
+    return env.get_template(site["type"][page["type"]]).render(page=page, site=site)
 
 
-def raygen(islocal=False):
-    if islocal:
-        site["url"] = "http://127.0.0.1:8080/"
+def raygen(localhost = None):
+    if localhost is not None:
+        site["url"] = localhost
     allpages, allposts = construct_site()
+
     j2_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR),
                          trim_blocks=True)
     j2_env.filters['datetime'] = format_datetime

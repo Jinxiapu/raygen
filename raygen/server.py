@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -10,11 +10,12 @@ Functions for serving a static HTML website locally.
 import os
 import sys
 
-
 import http.server as httpserver
 import socketserver
 
-def serve_static_site(output_dir, port=8080):
+from .config import OUTPUT_DIR
+
+def serve_static_site(output_dir=OUTPUT_DIR, port=8080):
     """
     Serve a directory containing static HTML files, on a specified port.
     :param output_dir: Output directory to be served.

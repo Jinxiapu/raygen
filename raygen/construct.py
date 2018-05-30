@@ -12,7 +12,7 @@ import os
 
 from .config import site, CONTENT_DIR
 from .convert import md2meta, md2html, md2toc
-from .util import urlify, get_content_lastmod_time
+from .util import urlify, get_content_lastmod_time, refactor_toc_html
 
 
 def get_real_path(relpath):
@@ -25,8 +25,8 @@ def tag_url(tag_name):
 
 def make_base_page(type, title, url,
                    requirements=None, author=None, lastmod=None):
-    if type not in ["tag", "post", "category", "links", "article", "home"]:
-        raise Exception("type {} don't exist.".format(type))
+    # if type not in site["type"].keys():
+    #     raise Exception("type {} don't exist.".format(type))
     if requirements is None:
         requirements = []
     if author is None:
@@ -39,7 +39,8 @@ def make_base_page(type, title, url,
         "title": title,
         "url": url,
         "requirements": requirements,
-        "lastmodtime": lastmod
+        "lastmodtime": lastmod,
+        "thumbnail": site["thumbnail"]
     }
 
 
@@ -77,19 +78,21 @@ def construct_post_page(md_file_path):
         "post",
         meta["title"] if "title" in meta else basename,
         url,
-        requirements=["isso", "markdown", "highlight"],
+        requirements=site["requirements"],
         author=meta["author"] if "author" in meta else None,
         lastmod=lastmodtime
     )
     post["buildtime"] = buildtime
     post["categroy"] = category
     post["content"] = md2html(get_real_path(md_file_path))
-    post["toc"] = md2toc(get_real_path(md_file_path))
+    post["toc"] = md2toc(get_real_path(md_file_path), pipefunc=refactor_toc_html)
     if "desc" in meta:
         post["desc"] = meta["desc"]
 
     if "isbest" in meta:
         post["isbest"] = meta["isbest"]
+    if "thumbnail" in meta:
+        post["thumbnail"] = meta["thumbnail"]
 
     if ("use" in meta) and ("mathjax" in meta["use"]):
         post["requirements"].append("mathjax")
@@ -108,7 +111,7 @@ def construct_post_page(md_file_path):
 
 def construct_category_page(category_path):
     category = make_base_page(
-        "category",
+        "section",
         category_path,
         category_path+"/",
         lastmod=get_content_lastmod_time(get_real_path(category_path))
@@ -153,7 +156,7 @@ def construct_home_page(allposts):
         site["title"],
         "",
     )
-    home["posts"] = allposts[:5]
+    home["posts"] = allposts[:4]
     return home
 
 
@@ -184,6 +187,6 @@ def construct_site():
         )
     ))
     allpages.append(construct_home_page(allposts))
-    allpages.append(construct_links_page())
+    #allpages.append(construct_links_page())
     allpages.extend(construct_tag_pages(allposts))
     return allpages, allposts
